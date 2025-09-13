@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema Yokai</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: #eee;
+      text-align: center;
+      padding: 20px;
+    }
+    form {
+      max-width: 400px;
+      margin: auto;
+      background: #222;
+      padding: 20px;
+      border-radius: 10px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 5px;
+    }
+    button {
+      background: crimson;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: darkred;
+    }
+  </style>
+</head>
+<body>
+  <h2>Controle Yokai</h2>
+  <form id="yokaiForm">
+    <input type="text" name="membro" placeholder="Nome do Membro" required>
+    <select name="produto" required>
+      <option value="">Selecione o Produto</option>
+      <option value="Drogas">Drogas</option>
+      <option value="Crack">Crack</option>
+      <option value="Ticket">Ticket</option>
+      <option value="Chip">Chip</option>
+      <option value="C4">C4</option>
+      <option value="Placa">Placa</option>
+      <option value="Lockpick alumínio">Lockpick alumínio</option>
+      <option value="Lockpick cobre">Lockpick cobre</option>
+    </select>
+    <input type="number" name="quantidade" placeholder="Quantidade" required>
+    <input type="number" name="valor" placeholder="Valor Sujo" required>
+    <button type="submit">Enviar</button>
+  </form>
+
+  <script>
+    document.getElementById("yokaiForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const data = {};
+      formData.forEach((value, key) => data[key] = value);
+
+      fetch("COLE_AQUI_A_URL_DO_SEU_APPS_SCRIPT", {
+        method: "POST",
+        body: JSON.stringify(data)
+      })
+      .then(res => res.text())
+      .then(msg => {
+        alert("Registro enviado com sucesso!");
+        document.getElementById("yokaiForm").reset();
+      })
+      .catch(err => alert("Erro ao enviar: " + err));
+    });
+  </script>
+</body>
+</html>
