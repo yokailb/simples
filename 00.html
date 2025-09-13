@@ -63,7 +63,7 @@
       const data = {};
       formData.forEach((value, key) => data[key] = value);
 
-      fetch("COLE_AQUI_A_URL_DO_SEU_APPS_SCRIPT", {
+      fetch("https://script.google.com/macros/s/AKfycbwmnUK5VG2-27m67WzOvE3K3TvBwmESQPP4uF8DVIdLb7SDLks0EzgbC4VRA2t355o/exec", {
         method: "POST",
         body: JSON.stringify(data)
       })
@@ -77,3 +77,4 @@
   </script>
 </body>
 </html>
+
