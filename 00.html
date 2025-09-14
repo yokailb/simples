@@ -35,7 +35,7 @@
       margin-top: 10px;
       display: block;
     }
-    input, select, button {
+    select, input, button {
       width: 100%;
       padding: 10px;
       margin-top: 5px;
@@ -63,7 +63,7 @@
       gap: 10px;
       margin-bottom: 5px;
     }
-    .membro-input input {
+    .membro-input select {
       flex: 1;
     }
     .membro-input button {
@@ -82,8 +82,17 @@
   <div class="container">
     <h1>Registro de Venda Yokai</h1>
     <form id="yokaiForm">
+
       <label>Membro Principal:</label>
-      <input type="text" name="membroPrincipal" required>
+      <select name="membroPrincipal" required>
+        <option value="">Selecione o membro principal</option>
+        <option value="Kayn">Kayn</option>
+        <option value="Amelie">Amelie</option>
+        <option value="Athena">Athena</option>
+        <option value="Rodrigo">Rodrigo</option>
+        <option value="Kurt">Kurt</option>
+        <option value="Felipe">Felipe</option>
+      </select>
 
       <label>Demais Membros:</label>
       <div class="membros-adicionais" id="membrosAdicionais"></div>
@@ -113,23 +122,48 @@
   </div>
 
   <script>
+    const membrosFixos = ["Kayn", "Amelie", "Athena", "Rodrigo", "Kurt", "Felipe"];
     const addBtn = document.getElementById('addMembro');
     const membrosContainer = document.getElementById('membrosAdicionais');
 
-    addBtn.addEventListener('click', () => {
+    function criarDropdownMembro() {
       const div = document.createElement('div');
       div.classList.add('membro-input');
-      div.innerHTML = `<input type="text" placeholder="Nome do Membro" required>
-                       <button type="button" onclick="this.parentElement.remove()">X</button>`;
+      const select = document.createElement('select');
+      select.required = true;
+
+      const optionVazio = document.createElement('option');
+      optionVazio.value = '';
+      optionVazio.textContent = 'Selecione o membro';
+      select.appendChild(optionVazio);
+
+      membrosFixos.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m;
+        opt.textContent = m;
+        select.appendChild(opt);
+      });
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.textContent = 'X';
+      removeBtn.onclick = () => div.remove();
+
+      div.appendChild(select);
+      div.appendChild(removeBtn);
       membrosContainer.appendChild(div);
-    });
+    }
+
+    addBtn.addEventListener('click', criarDropdownMembro);
 
     const form = document.getElementById('yokaiForm');
     form.addEventListener('submit', e => {
       e.preventDefault();
-      
-      const membroPrincipal = form.membroPrincipal.value.trim();
-      const membrosExtras = Array.from(membrosContainer.querySelectorAll('input')).map(i => i.value.trim());
+
+      const membroPrincipal = form.membroPrincipal.value;
+      const membrosExtras = Array.from(membrosContainer.querySelectorAll('select'))
+                                 .map(s => s.value)
+                                 .filter(v => v !== '');
       const produto = form.produto.value;
       const quantidade = parseFloat(form.quantidade.value);
       const valorSujo = parseFloat(form.valorSujo.value);
@@ -137,7 +171,6 @@
       const todosParticipantes = [membroPrincipal, ...membrosExtras, 'Yokai'];
       const numParticipantes = todosParticipantes.length;
 
-      // Definir custo do produto por unidade
       const custos = {
         'Drogas': 600,
         'Crack': 3000,
@@ -150,13 +183,11 @@
       };
       const custoTotal = custos[produto] * quantidade;
 
-      // Divisão proporcional
       const parteValorSujo = valorSujo / numParticipantes;
       const parteCusto = custoTotal / numParticipantes;
       const lucroPorParticipante = parteValorSujo - parteCusto;
 
       const dataToSend = {
-        data: new Date(),
         produto,
         quantidade,
         valorSujo,
@@ -165,11 +196,26 @@
         lucroPorParticipante
       };
 
-      google.script.run.withSuccessHandler(() => {
-        alert('Registro enviado com sucesso!');
-        form.reset();
-        membrosContainer.innerHTML = '';
-      }).registrarVenda(dataToSend);
+      // Substitua pelo link do seu Web App do Apps Script
+      fetch('https://script.google.com/macros/s/AKfycbxqe0pqsOmE6swMnGRRgx-kafIXi65WOpaO_mpS5GPa6Nd9zrZLXMJYrb9zejcNe5IR/exec', {
+        method: 'POST',
+        body: JSON.stringify(dataToSend),
+        headers: { 'Content-Type': 'application/json' }
+      })
+      .then(response => response.json())
+      .then(res => {
+        if(res.status === 'success'){
+          alert('Registro enviado com sucesso!');
+          form.reset();
+          membrosContainer.innerHTML = '';
+        } else {
+          alert('Erro ao enviar o registro');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Erro ao enviar o registro');
+      });
     });
   </script>
 </body>
