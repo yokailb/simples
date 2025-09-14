@@ -3,78 +3,174 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema Yokai</title>
+  <title>Registro de Venda Yokai</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: #eee;
-      text-align: center;
-      padding: 20px;
+      font-family: 'Inter', sans-serif;
+      background: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
     }
-    form {
-      max-width: 400px;
-      margin: auto;
-      background: #222;
-      padding: 20px;
-      border-radius: 10px;
+    .container {
+      background: #fff;
+      padding: 30px;
+      margin-top: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 10px;
+      display: block;
     }
     input, select, button {
       width: 100%;
       padding: 10px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 5px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      box-sizing: border-box;
     }
     button {
-      background: crimson;
+      background: #4CAF50;
       color: white;
+      border: none;
       cursor: pointer;
+      font-weight: 600;
     }
     button:hover {
-      background: darkred;
+      background: #45a049;
+    }
+    .membros-adicionais {
+      margin-bottom: 15px;
+    }
+    .membro-input {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 5px;
+    }
+    .membro-input input {
+      flex: 1;
+    }
+    .membro-input button {
+      flex: 0 0 40px;
+      padding: 0;
+      background: #e74c3c;
+    }
+    .add-btn {
+      background: #3498db;
+      margin-top: -10px;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
-  <h2>Controle Yokai</h2>
-  <form id="yokaiForm">
-    <input type="text" name="membro" placeholder="Nome do Membro" required>
-    <select name="produto" required>
-      <option value="">Selecione o Produto</option>
-      <option value="Drogas">Drogas</option>
-      <option value="Crack">Crack</option>
-      <option value="Ticket">Ticket</option>
-      <option value="Chip">Chip</option>
-      <option value="C4">C4</option>
-      <option value="Placa">Placa</option>
-      <option value="Lockpick alumínio">Lockpick alumínio</option>
-      <option value="Lockpick cobre">Lockpick cobre</option>
-    </select>
-    <input type="number" name="quantidade" placeholder="Quantidade" required>
-    <input type="number" name="valor" placeholder="Valor Sujo" required>
-    <button type="submit">Enviar</button>
-  </form>
+  <div class="container">
+    <h1>Registro de Venda Yokai</h1>
+    <form id="yokaiForm">
+      <label>Membro Principal:</label>
+      <input type="text" name="membroPrincipal" required>
+
+      <label>Demais Membros:</label>
+      <div class="membros-adicionais" id="membrosAdicionais"></div>
+      <button type="button" class="add-btn" id="addMembro">+ Adicionar Membro</button>
+
+      <label>Produto:</label>
+      <select name="produto" required>
+        <option value="">Selecione o produto</option>
+        <option value="Drogas">Drogas</option>
+        <option value="Crack">Crack</option>
+        <option value="Ticket">Ticket</option>
+        <option value="Chip">Chip</option>
+        <option value="C4">C4</option>
+        <option value="Placa">Placa</option>
+        <option value="Lockpick Alumínio">Lockpick Alumínio</option>
+        <option value="Lockpick Cobre">Lockpick Cobre</option>
+      </select>
+
+      <label>Quantidade de Produtos:</label>
+      <input type="number" name="quantidade" min="1" required>
+
+      <label>Valor Sujo Total:</label>
+      <input type="number" name="valorSujo" min="0" required>
+
+      <button type="submit">Enviar Registro</button>
+    </form>
+  </div>
 
   <script>
-    document.getElementById("yokaiForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      const formData = new FormData(this);
-      const data = {};
-      formData.forEach((value, key) => data[key] = value);
+    const addBtn = document.getElementById('addMembro');
+    const membrosContainer = document.getElementById('membrosAdicionais');
 
-      fetch("https://script.google.com/macros/s/AKfycbwmnUK5VG2-27m67WzOvE3K3TvBwmESQPP4uF8DVIdLb7SDLks0EzgbC4VRA2t355o/exec", {
-        method: "POST",
-        body: JSON.stringify(data)
-      })
-      .then(res => res.text())
-      .then(msg => {
-        alert("Registro enviado com sucesso!");
-        document.getElementById("yokaiForm").reset();
-      })
-      .catch(err => alert("Erro ao enviar: " + err));
+    addBtn.addEventListener('click', () => {
+      const div = document.createElement('div');
+      div.classList.add('membro-input');
+      div.innerHTML = `<input type="text" placeholder="Nome do Membro" required>
+                       <button type="button" onclick="this.parentElement.remove()">X</button>`;
+      membrosContainer.appendChild(div);
+    });
+
+    const form = document.getElementById('yokaiForm');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      
+      const membroPrincipal = form.membroPrincipal.value.trim();
+      const membrosExtras = Array.from(membrosContainer.querySelectorAll('input')).map(i => i.value.trim());
+      const produto = form.produto.value;
+      const quantidade = parseFloat(form.quantidade.value);
+      const valorSujo = parseFloat(form.valorSujo.value);
+
+      const todosParticipantes = [membroPrincipal, ...membrosExtras, 'Yokai'];
+      const numParticipantes = todosParticipantes.length;
+
+      // Definir custo do produto por unidade
+      const custos = {
+        'Drogas': 600,
+        'Crack': 3000,
+        'Ticket': 5250,
+        'Chip': 5250,
+        'C4': 6000,
+        'Placa': 7500,
+        'Lockpick Alumínio': 7500,
+        'Lockpick Cobre': 7500
+      };
+      const custoTotal = custos[produto] * quantidade;
+
+      // Divisão proporcional
+      const parteValorSujo = valorSujo / numParticipantes;
+      const parteCusto = custoTotal / numParticipantes;
+      const lucroPorParticipante = parteValorSujo - parteCusto;
+
+      const dataToSend = {
+        data: new Date(),
+        produto,
+        quantidade,
+        valorSujo,
+        custoTotal,
+        participantes: todosParticipantes,
+        lucroPorParticipante
+      };
+
+      google.script.run.withSuccessHandler(() => {
+        alert('Registro enviado com sucesso!');
+        form.reset();
+        membrosContainer.innerHTML = '';
+      }).registrarVenda(dataToSend);
     });
   </script>
 </body>
 </html>
-
